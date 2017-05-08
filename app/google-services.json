@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "328561349591",
+    "firebase_url": "https://realtimedb-97aa8.firebaseio.com",
+    "project_id": "realtimedb-97aa8",
+    "storage_bucket": "realtimedb-97aa8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:328561349591:android:10d442096c32cb3b",
+        "android_client_info": {
+          "package_name": "com.example.angitha.realtimefirebasedbtest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "328561349591-rs4sauii9od5lom1ruvb8rsopsal3r92.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDGI8rObaaV6XYLOmUkMPa8rMwOHx9wTF4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
