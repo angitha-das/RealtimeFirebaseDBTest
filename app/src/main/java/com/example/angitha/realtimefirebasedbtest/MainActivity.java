@@ -11,6 +11,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
@@ -56,12 +57,75 @@ public class MainActivity extends AppCompatActivity {
 //ADD LISTENER FOR SINGLE VALUE EVENT
 
 //==================================
+//        DatabaseReference ref1 = FirebaseDatabase.getInstance().getReference("RootNode").child("Student");
+//        ref1.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                for(DataSnapshot studSnapShot :dataSnapshot.getChildren()){
+//                    StudentModel studentModel = studSnapShot.getValue(StudentModel.class);
+//                    textView.append(studentModel.getName()+"-"+studentModel.getEmail()+"\n");
+//                }
+//                //collectStudentDetails((Map<String,Object>) dataSnapshot.getValue());
+//            }
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
 
-        mDatabase.child("Student").addListenerForSingleValueEvent(new ValueEventListener() {
+//==================================
+        //To populate list of students for getting attendence list
+
+//        DatabaseReference ref3 = FirebaseDatabase.getInstance().getReference("RootNode").child("Student");
+//        ref3.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                for(DataSnapshot studSnapShot :dataSnapshot.getChildren()){
+//                    StudentModel studentModel = studSnapShot.getValue(StudentModel.class);
+//                    if(studentModel.getAccademicyear().equalsIgnoreCase("2nd yr")&&
+//                            studentModel.getDepartment().equalsIgnoreCase("maths")){
+//                        textView.append(studentModel.getName()+"-"+studentModel.getEmail()+"\n");
+//                    }
+//                }
+//            }
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
+
+
+        //Join 2 tables attendence and Student to calculate monthly report.
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("RootNode").child("Attendence");
+
+        ref.orderByChild("date").startAt("05-May-2015").endAt("08-May-2015").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                //AttendenceModel newAttendance = dataSnapshot.getValue(AttendenceModel.class);
-                collectStudentDetails((Map<String,Object>) dataSnapshot.getValue());
+                for(DataSnapshot attendenceSnapShot :dataSnapshot.getChildren()){
+                    AttendenceModel attendenceModel = attendenceSnapShot.getValue(AttendenceModel.class);
+
+                    Map<String, Object> valuesMap = (HashMap<String, Object>) attendenceSnapShot.getValue();
+
+
+                    DatabaseReference ref2 = (DatabaseReference) FirebaseDatabase.getInstance().getReference("RootNode").child("Student").orderByKey().equalTo(attendenceModel.getStudentid());
+                    ref2.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            for(DataSnapshot studSnapShot :dataSnapshot.getChildren()){
+                                StudentModel studentModel = studSnapShot.getValue(StudentModel.class);
+
+                        textView.append(studentModel.getName()+"-"+studentModel.getEmail()+"\n"+"-"+
+                                studentModel.getAccademicyear()+"-"+studentModel.getDepartment()+"\n\n");
+
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+                }
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -117,17 +181,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
     private void collectStudentDetails(Map<String,Object> student) {
-
         ArrayList<String> studentList = new ArrayList<>();
-
-        //iterate through each user, ignoring their UID
         for (Map.Entry<String, Object> entry : student.entrySet()){
-
-            //Get user map
             Map singleStudent = (Map) entry.getValue();
-            //Get phone field and append to list
             studentList.add((String) singleStudent.get("name"));
-
         }
         textView.setText(studentList.toString());
     }

@@ -17,6 +17,18 @@ public class AttendenceModel {
     public AttendenceModel(){
 
     }
+    public String getDate()
+    {
+        return this.date;
+    }
+    public int getStudentid()
+    {
+        return this.studentid;
+    }
+    public int getHour()
+    {
+        return this.hour;
+    }
     public AttendenceModel(int studentid, String date, int hour) {
         this.studentid = studentid;
         this.date = date;
