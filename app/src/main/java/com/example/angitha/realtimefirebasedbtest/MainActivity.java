@@ -2,15 +2,16 @@ package com.example.angitha.realtimefirebasedbtest;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.TextView;
 
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -43,96 +44,63 @@ public class MainActivity extends AppCompatActivity {
 
         //Teacher marks attendence of 1st year cs students for 1st hour today.
 
-        String attendenceId = mDatabase.child("Attendence").push().getKey();
-        AttendenceModel attendenceModel = new AttendenceModel(
-                13, "08-May-2015",2);
-        mDatabase.child("Attendence").child(attendenceId).setValue(attendenceModel);
+//        String attendenceId = mDatabase.child("Attendence").push().getKey();
+//        AttendenceModel attendenceModel = new AttendenceModel(
+//                13, "08-May-2015",2);
+//        mDatabase.child("Attendence").child(attendenceId).setValue(attendenceModel);
+
 
         //Fetch attendence list of students in 1st year in department cs
-        mDatabase.child("Attendence").addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                AttendenceModel newAttendance = dataSnapshot.getValue(AttendenceModel.class);
-                textView.setText(" Student id: " + newAttendance.studentid+
-                        " Date: " + newAttendance.date+" Hour: " + newAttendance.hour);
+//==================================
 
+//ADD LISTENER FOR SINGLE VALUE EVENT
 
-                // New child added, increment count from rootnode
-//                final AtomicInteger count = new AtomicInteger();
-//                int newCount = count.incrementAndGet();
-//                System.out.println("Added " + dataSnapshot.getKey() + ", count is " + newCount);
-            }
+//==================================
 
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-//                Post changedPost = dataSnapshot.getValue(Post.class);
-//                System.out.println("The updated post title is: " + changedPost.title);
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-//                Post removedPost = dataSnapshot.getValue(Post.class);
-//                System.out.println("The blog post titled " + removedPost.title + " has been deleted");
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-        mDatabase.child("Attendence").addListenerForSingleValueEvent(new ValueEventListener() {
+        mDatabase.child("Student").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-//                final AtomicInteger count = new AtomicInteger();
-//                long numChildren = dataSnapshot.getChildrenCount();
-//                System.out.println(count.get() + " == " + numChildren);
+                //AttendenceModel newAttendance = dataSnapshot.getValue(AttendenceModel.class);
+                collectStudentDetails((Map<String,Object>) dataSnapshot.getValue());
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
             }
         });
 
-        mDatabase.child("Attendence").orderByChild("studentid").limitToFirst(3).addChildEventListener(new ChildEventListener() {
+//==================================
 
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                AttendenceModel newAttendance = dataSnapshot.getValue(AttendenceModel.class);
-                textView.setText(dataSnapshot.getKey()+" Student id: " + newAttendance.studentid+
-                        " Date: " + newAttendance.date+" Hour: " + newAttendance.hour);
+        //ADD CHILD EVENT LISTENER
 
-            }
+//==================================
 
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+//        mDatabase.child("Attendence").addChildEventListener(new ChildEventListener() {
+//            @Override
+//            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+//            }
+//
+//            @Override
+//            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+//            }
+//
+//            @Override
+//            public void onChildRemoved(DataSnapshot dataSnapshot) {
+//            }
+//
+//            @Override
+//            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//            }
+//        });
 
-            }
+//==================================
+// ADD VALUE EVENT LISTENER
+// ==================================
 
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-                //Adding value listener.
 //        mDatabase.child("Attendence").child(attendenceId).addValueEventListener(new ValueEventListener() {
 //            @Override
 //            public void onDataChange(DataSnapshot dataSnapshot) {
@@ -147,11 +115,20 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        });
 
+    }
+    private void collectStudentDetails(Map<String,Object> student) {
 
+        ArrayList<String> studentList = new ArrayList<>();
 
+        //iterate through each user, ignoring their UID
+        for (Map.Entry<String, Object> entry : student.entrySet()){
 
+            //Get user map
+            Map singleStudent = (Map) entry.getValue();
+            //Get phone field and append to list
+            studentList.add((String) singleStudent.get("name"));
 
-
-
+        }
+        textView.setText(studentList.toString());
     }
 }
